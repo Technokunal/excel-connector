@@ -1,25 +1,21 @@
 package org.mule.modules.excel;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.List;
 
-import org.mule.api.annotations.Config;
 import org.mule.api.annotations.Connector;
-import org.mule.api.annotations.param.MetaDataKeyParam;
+import org.mule.api.annotations.display.Summary;
 import org.mule.api.annotations.MetaDataScope;
 import org.mule.api.annotations.Processor;
 import org.mule.api.annotations.param.Default;
-import org.mule.modules.excel.config.ConnectorConfig;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.util.ArrayList;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
@@ -37,16 +33,13 @@ public class ExcelConnector {
 	public static final int EXCEL_STYLE_ESCAPING = 0;
 	
     private Workbook workbook = null;
-    private List<List<String>> csvData = null;
+    private List<List<String>> excelData = null;
     private int maxRowWidth = 0;
     private int formattingConvention = 0;
     private DataFormatter formatter = null;
     private FormulaEvaluator evaluator = null;
     private String separator = ",";
-
-    @Config
-    ConnectorConfig config;
-	
+    
     /**
      * Custom processor
      *
@@ -54,10 +47,12 @@ public class ExcelConnector {
      *
      * @param fileName Excel file location.
      * @param sheetName Sheet in Excel file to retrieve data.
-     * @return Data in CSV format.
+     * @param fileIncludesHeaderRow Headers are included in file.
+     * @return Data in List<Map> format.
      */
     @Processor
-    public List<List<String>> ConvertExcel(String fileName, String sheetName) throws FileNotFoundException, IOException, IllegalArgumentException, InvalidFormatException{
+    @Summary("Convert Excel to Maps")
+    public List<Map<String,String>> ConvertExcel(String fileName, String sheetName, @Default("true") boolean fileIncludesHeaderRow) throws FileNotFoundException, IOException, IllegalArgumentException, InvalidFormatException{
     	
     	File source = new File(fileName);
     	File[] filesList = null;
@@ -72,34 +67,21 @@ public class ExcelConnector {
     	for(File excelFile : filesList) {
             // Open the workbook
             this.openWorkbook(excelFile);
-            // Convert it's contents into a CSV file
-            this.convertSheetToCSV(sheetName); 
+            // Convert it's contents into Map
+            this.convertSheetToMap(sheetName); 
         }
     	
-    	//return saveCSVFile();
-    	return this.csvData;
-    }
-        
-    public ConnectorConfig getConfig() {
-        return config;
-    }
-
-    public void setConfig(ConnectorConfig config) {
-        this.config = config;
+    	return generateKeyValues();
     }
     
-    private void convertSheetToCSV(String sheetName) {
+    private void convertSheetToMap(String sheetName) {
         Sheet sheet = null;
         Row row = null;
         int lastRowNum = 0;
-        this.csvData = new ArrayList<List<String>>();        
-
-        System.out.println("Converting files contents to CSV format.");
-
-        // Discover how many sheets there are in the workbook....
+        this.excelData = new ArrayList<List<String>>(); 
+        
         int numSheets = this.workbook.getNumberOfSheets();
 
-        // and then iterate through them.
         for(int i = 0; i < numSheets; i++) {
         	
         	if (this.workbook.getSheetName(i).equals(sheetName)){
@@ -109,48 +91,46 @@ public class ExcelConnector {
                     lastRowNum = sheet.getLastRowNum();
                     for(int j = 0; j <= lastRowNum; j++) {
                         row = sheet.getRow(j);
-                        this.rowToCSV(row);
+                        this.rowToArrayList(row);
                     }
                 }
         	}
         }
     }
     
-    private void rowToCSV(Row row) {
+    private void rowToArrayList(Row row) {
         Cell cell = null;
         int lastCellNum = 0;
-        ArrayList<String> csvLine = new ArrayList<String>();
+        ArrayList<String> excelLine = new ArrayList<String>();
 
         if(row != null) {
             lastCellNum = row.getLastCellNum();
             for(int i = 0; i <= lastCellNum - 1; i++) {
                 cell = row.getCell(i);
                 if(cell == null) {
-                    csvLine.add("");
+                	excelLine.add("");
                 }
                 else {
                     if(cell.getCellType() != Cell.CELL_TYPE_FORMULA) {
-                        csvLine.add(this.formatter.formatCellValue(cell));
+                    	excelLine.add(this.formatter.formatCellValue(cell));
                     }
                     else {
-                        csvLine.add(this.formatter.formatCellValue(cell, this.evaluator));
+                    	excelLine.add(this.formatter.formatCellValue(cell, this.evaluator));
                     }
                 }
             }
             
             if(lastCellNum > this.maxRowWidth) {
-                this.maxRowWidth = lastCellNum - 1;
+                this.maxRowWidth = lastCellNum;
             }
         }
-        this.csvData.add(csvLine);
+        this.excelData.add(excelLine);
     }
     
     private void openWorkbook(File file) throws FileNotFoundException,
 	    IOException, InvalidFormatException {
 		FileInputStream fis = null;
 		try {
-			System.out.println("Opening workbook [" + file.getName() + "]");
-			
 			fis = new FileInputStream(file);
 			
 			this.workbook = WorkbookFactory.create(fis);
@@ -164,112 +144,49 @@ public class ExcelConnector {
 		}
 	}
     
-    
-    private String saveCSVFile() {
+    private List<Map<String,String>> generateKeyValues() {
     	
+    	List<Map<String, String>> list = new ArrayList<>();
     	List<String> line = null;
     	String csvLineElement = null;
-    	StringBuilder sb = new StringBuilder();
     	
-    	System.out.println("Converting to CSV");
-    	
-    	for(int i = 0; i < this.csvData.size(); i++) {
-    		line = this.csvData.get(i);
-            for(int j = 0; j < this.maxRowWidth; j++) {
-            	if(line.size() > j) {
-                    csvLineElement = line.get(j);
-                    if(csvLineElement != null) {
-                        //sb.append(this.escapeEmbeddedCharacters(csvLineElement));
-                    	sb.append(csvLineElement);
-                    }
-                }
-                if(j < (this.maxRowWidth - 1)) {
-                    sb.append(this.separator);
-                }
-            }
-            
-            if(i < (this.csvData.size() - 1)) {
-                sb.append("\n");
-            }
-            
+    	for(int i = 0; i < this.excelData.size(); i++) {
+    		line = this.excelData.get(i);
+    		
+    		Map<String, String> row = new HashMap<>();  
+    		
+    		for(int j = 0; j < this.maxRowWidth; j++) {
+    			  
+    			if(line.size() > j) {
+    				csvLineElement = line.get(j);
+    				if(csvLineElement != null) {            						
+            			row.put(this.excelData.get(0).get(j), escapeEmbeddedCharacters(line.get(j)));			
+    				} else {
+    					row.put(this.excelData.get(0).get(j), "");   
+    				}    				
+    			}
+    			if(line.size() <= j) {    				
+        			row.put(this.excelData.get(0).get(j), "");
+    			}  
+    			
+    		}
+    		list.add(row);
     	}
-    	return sb.toString();
+    	   	
+    	return list;
     }
-    
-    /*
-    private void saveCSVFile() throws FileNotFoundException, IOException {
-    	
-	    FileWriter fw = null;
-	    BufferedWriter bw = null;
-	    ArrayList<String> line = null;
-	    StringBuffer buffer = null;
-	    String csvLineElement = null;
-	    try {
-	
-	        // Open a writer onto the CSV file.
-	        fw = new FileWriter(file);
-	        bw = new BufferedWriter(fw);
-	
-	        // Step through the elements of the ArrayList that was used to hold
-	        // all of the data recovered from the Excel workbooks' sheets, rows
-	        // and cells.
-	        for(int i = 0; i < this.csvData.size(); i++) {
-	            buffer = new StringBuffer();
-	
-	            line = this.csvData.get(i);
-	            for(int j = 0; j < this.maxRowWidth; j++) {
-	                if(line.size() > j) {
-	                    csvLineElement = line.get(j);
-	                    if(csvLineElement != null) {
-	                        buffer.append(this.escapeEmbeddedCharacters(csvLineElement));
-	                    }
-	                }
-	                if(j < (this.maxRowWidth - 1)) {
-	                    buffer.append(this.separator);
-	                }
-	            }
-	
-	            // Once the line is built, write it away to the CSV file.
-	            bw.write(buffer.toString().trim());
-	
-	            // Condition the inclusion of new line characters so as to
-	            // avoid an additional, superfluous, new line at the end of
-	            // the file.
-	            if(i < (this.csvData.size() - 1)) {
-	                bw.newLine();
-	            }
-	        }
-	    }
-	    finally {
-	        if(bw != null) {
-	            bw.flush();
-	            bw.close();
-	        }
-	    }
-	}
-    */
-    
+        
     private String escapeEmbeddedCharacters(String field) {
         StringBuffer buffer = null;
 
-        // If the fields contents should be formatted to confrom with Excel's
-        // convention....
         if(this.formattingConvention == ExcelConnector.EXCEL_STYLE_ESCAPING) {
 
-            // Firstly, check if there are any speech marks (") in the field;
-            // each occurrence must be escaped with another set of speech marks
-            // and then the entire field should be enclosed within another
-            // set of speech marks. Thus, "Yes" he said would become
-            // """Yes"" he said"
             if(field.contains("\"")) {
                 buffer = new StringBuffer(field.replaceAll("\"", "\\\"\\\""));
                 buffer.insert(0, "\"");
                 buffer.append("\"");
             }
             else {
-                // If the field contains either embedded separator or EOL
-                // characters, then escape the whole field by surrounding it
-                // with speech marks.
                 buffer = new StringBuffer(field);
                 if((buffer.indexOf(this.separator)) > -1 ||
                          (buffer.indexOf("\n")) > -1) {
@@ -279,9 +196,7 @@ public class ExcelConnector {
             }
             return(buffer.toString().trim());
         }
-        // The only other formatting convention this class obeys is the UNIX one
-        // where any occurrence of the field separator or EOL character will
-        // be escaped by preceding it with a backslash.
+
         else {
             if(field.contains(this.separator)) {
                 field = field.replaceAll(this.separator, ("\\\\" + this.separator));

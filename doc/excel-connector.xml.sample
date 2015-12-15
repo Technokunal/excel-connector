@@ -1,3 +1,3 @@
 <!-- BEGIN_INCLUDE(excel:convertexcel) -->
-    <excel:convertexcel fileName="#[message.payload['fileName']]" sheetName="#[message.payload['sheetName']]" />
+    <excel:convertexcel fileName="#[message.payload['fileName']]" sheetName="#[message.payload['sheetName']]" ignoreHeader="true" />
 <!-- END_INCLUDE(excel:convertexcel) -->

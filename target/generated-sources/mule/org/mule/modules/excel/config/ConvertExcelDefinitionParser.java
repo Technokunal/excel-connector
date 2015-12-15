@@ -16,7 +16,7 @@ import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
 @SuppressWarnings("all")
-@Generated(value = "Mule DevKit Version 3.7.1", date = "2015-12-02T05:50:09-08:00", comments = "Build UNNAMED.2613.77421cc")
+@Generated(value = "Mule DevKit Version 3.7.1", date = "2015-12-15T02:20:32-06:00", comments = "Build UNNAMED.2613.77421cc")
 public class ConvertExcelDefinitionParser
     extends AbstractDevkitBasedDefinitionParser
 {
@@ -48,6 +48,7 @@ public class ConvertExcelDefinitionParser
         parseConfigRef(element, builder);
         parseProperty(builder, element, "fileName", "fileName");
         parseProperty(builder, element, "sheetName", "sheetName");
+        parseProperty(builder, element, "fileIncludesHeaderRow", "fileIncludesHeaderRow");
         BeanDefinition definition = builder.getBeanDefinition();
         setNoRecurseOnDefinition(definition);
         attachProcessorDefinition(parserContext, definition);

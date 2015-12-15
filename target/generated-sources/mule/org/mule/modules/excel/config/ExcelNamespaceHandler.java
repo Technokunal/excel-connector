@@ -14,7 +14,7 @@ import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
  * 
  */
 @SuppressWarnings("all")
-@Generated(value = "Mule DevKit Version 3.7.1", date = "2015-12-02T05:50:09-08:00", comments = "Build UNNAMED.2613.77421cc")
+@Generated(value = "Mule DevKit Version 3.7.1", date = "2015-12-15T02:20:32-06:00", comments = "Build UNNAMED.2613.77421cc")
 public class ExcelNamespaceHandler
     extends NamespaceHandlerSupport
 {
@@ -39,7 +39,7 @@ public class ExcelNamespaceHandler
      */
     public void init() {
         try {
-            this.registerBeanDefinitionParser("config", new ExcelConnectorConnectorConfigConfigDefinitionParser());
+            this.registerBeanDefinitionParser("config", new ExcelConnectorConfigDefinitionParser());
         } catch (NoClassDefFoundError ex) {
             handleException("config", "@Config", ex);
         }

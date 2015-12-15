@@ -17,6 +17,7 @@ import org.mule.common.Result;
 import org.mule.common.metadata.ConnectorMetaDataEnabled;
 import org.mule.common.metadata.DefaultListMetaDataModel;
 import org.mule.common.metadata.DefaultMetaData;
+import org.mule.common.metadata.DefaultParameterizedMapMetaDataModel;
 import org.mule.common.metadata.DefaultPojoMetaDataModel;
 import org.mule.common.metadata.DefaultSimpleMetaDataModel;
 import org.mule.common.metadata.MetaData;
@@ -31,11 +32,11 @@ import org.mule.security.oauth.callback.ProcessCallback;
 
 
 /**
- * ConvertExcelMessageProcessor invokes the {@link org.mule.modules.excel.ExcelConnector#ConvertExcel(java.lang.String, java.lang.String)} method in {@link ExcelConnector }. For each argument there is a field in this processor to match it.  Before invoking the actual method the processor will evaluate and transform where possible to the expected argument type.
+ * ConvertExcelMessageProcessor invokes the {@link org.mule.modules.excel.ExcelConnector#ConvertExcel(java.lang.String, java.lang.String, boolean)} method in {@link ExcelConnector }. For each argument there is a field in this processor to match it.  Before invoking the actual method the processor will evaluate and transform where possible to the expected argument type.
  * 
  */
 @SuppressWarnings("all")
-@Generated(value = "Mule DevKit Version 3.7.1", date = "2015-12-02T05:50:09-08:00", comments = "Build UNNAMED.2613.77421cc")
+@Generated(value = "Mule DevKit Version 3.7.1", date = "2015-12-15T02:20:32-06:00", comments = "Build UNNAMED.2613.77421cc")
 public class ConvertExcelMessageProcessor
     extends DevkitBasedMessageProcessor
     implements MessageProcessor, OperationMetaDataEnabled
@@ -45,6 +46,8 @@ public class ConvertExcelMessageProcessor
     protected String _fileNameType;
     protected Object sheetName;
     protected String _sheetNameType;
+    protected Object fileIncludesHeaderRow;
+    protected boolean _fileIncludesHeaderRowType;
 
     public ConvertExcelMessageProcessor(String operationName) {
         super(operationName);
@@ -80,6 +83,15 @@ public class ConvertExcelMessageProcessor
     }
 
     /**
+     * Sets fileIncludesHeaderRow
+     * 
+     * @param value Value to set
+     */
+    public void setFileIncludesHeaderRow(Object value) {
+        this.fileIncludesHeaderRow = value;
+    }
+
+    /**
      * Sets fileName
      * 
      * @param value Value to set
@@ -111,6 +123,7 @@ public class ConvertExcelMessageProcessor
             moduleObject = findOrCreate(null, false, event);
             final String _transformedFileName = ((String) evaluateAndTransform(getMuleContext(), event, ConvertExcelMessageProcessor.class.getDeclaredField("_fileNameType").getGenericType(), null, fileName));
             final String _transformedSheetName = ((String) evaluateAndTransform(getMuleContext(), event, ConvertExcelMessageProcessor.class.getDeclaredField("_sheetNameType").getGenericType(), null, sheetName));
+            final Boolean _transformedFileIncludesHeaderRow = ((Boolean) evaluateAndTransform(getMuleContext(), event, ConvertExcelMessageProcessor.class.getDeclaredField("_fileIncludesHeaderRowType").getGenericType(), null, fileIncludesHeaderRow));
             Object resultPayload;
             final ProcessTemplate<Object, Object> processTemplate = ((ProcessAdapter<Object> ) moduleObject).getProcessTemplate();
             resultPayload = processTemplate.execute(new ProcessCallback<Object,Object>() {
@@ -127,7 +140,7 @@ public class ConvertExcelMessageProcessor
                 public Object process(Object object)
                     throws Exception
                 {
-                    return ((ExcelConnector) object).ConvertExcel(_transformedFileName, _transformedSheetName);
+                    return ((ExcelConnector) object).ConvertExcel(_transformedFileName, _transformedSheetName, _transformedFileIncludesHeaderRow);
                 }
 
             }
@@ -146,7 +159,7 @@ public class ConvertExcelMessageProcessor
 
     @Override
     public Result<MetaData> getOutputMetaData(MetaData inputMetadata) {
-        return new DefaultResult<MetaData>(new DefaultMetaData(new DefaultListMetaDataModel(new DefaultListMetaDataModel(getPojoOrSimpleModel(String.class)))));
+        return new DefaultResult<MetaData>(new DefaultMetaData(new DefaultListMetaDataModel(new DefaultParameterizedMapMetaDataModel(getPojoOrSimpleModel(String.class), getPojoOrSimpleModel(String.class)))));
     }
 
     private MetaDataModel getPojoOrSimpleModel(Class clazz) {

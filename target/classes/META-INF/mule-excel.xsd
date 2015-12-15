@@ -16,16 +16,6 @@
               <xs:documentation>Give a name to this configuration so it can be later referenced by config-ref.</xs:documentation>
             </xs:annotation>
           </xs:attribute>
-          <xs:attribute type="xs:string" use="optional" default="Hello" name="greeting">
-            <xs:annotation>
-              <xs:documentation>Greeting message</xs:documentation>
-            </xs:annotation>
-          </xs:attribute>
-          <xs:attribute type="xs:string" use="optional" default="How are you?" name="reply">
-            <xs:annotation>
-              <xs:documentation>Reply message</xs:documentation>
-            </xs:annotation>
-          </xs:attribute>
         </xs:extension>
       </xs:complexContent>
     </xs:complexType>
@@ -51,6 +41,11 @@
         <xs:attribute type="xs:string" use="required" name="sheetName">
           <xs:annotation>
             <xs:documentation>Sheet in Excel file to retrieve data.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute xmlns="http://www.mulesoft.org/schema/mule/excel" type="booleanType" use="optional" default="true" name="fileIncludesHeaderRow">
+          <xs:annotation>
+            <xs:documentation>Headers are included in file.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
       </xs:extension>

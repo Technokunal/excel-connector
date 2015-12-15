@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Excel
 Bundle-SymbolicName: org.mule.tooling.ui.contribution.excel.3.5.0;singleton:=true
-Bundle-Version: 1.0.0.201512021750
+Bundle-Version: 1.0.0.201512151420
 Bundle-Activator: org.mule.tooling.ui.contribution.ExcelActivator
 Bundle-Vendor: 
 Require-Bundle: org.eclipse.ui,

@@ -2,15 +2,13 @@
 
 <namespace xmlns="http://www.mulesoft.org/schema/mule/tooling.attributes" xmlns:mule="http://www.mulesoft.org/schema/mule/core" url="http://www.mulesoft.org/schema/mule/excel" prefix="excel">
   <global-cloud-connector versions="[3.5.0,8.0.0]" caption="Excel" description="" icon="" localId="parentConfig" image="" abstract="true" extends="http://www.mulesoft.org/schema/mule/excel/abstractExcelConnectorGeneric"></global-cloud-connector>
-  <global-cloud-connector versions="[3.5.0,8.0.0]" caption="Excel: Configuration" description="Global Configuration configuration information." icon="icons/small/excel-connector-24x16.png" localId="config" image="icons/large/excel-connector-48x32.png" abstract="false" extends="http://www.mulesoft.org/schema/mule/excel/parentConfig" connectivityTesting="off" metaData="dynamic" metaDataKeyDisplay="DISPLAY_NAME" supportsUserDefinedMetaData="false">
+  <global-cloud-connector versions="[3.5.0,8.0.0]" caption="Excel" description="Global Excel configuration information." icon="icons/small/excel-connector-24x16.png" localId="config" image="icons/large/excel-connector-48x32.png" abstract="false" extends="http://www.mulesoft.org/schema/mule/excel/parentConfig" connectivityTesting="off" metaData="dynamic" metaDataKeyDisplay="DISPLAY_NAME" supportsUserDefinedMetaData="false">
     <attribute-category caption="General" description="Excel configuration properties.">
       <group id="excelGenericProperties" caption="Basic Settings">
         <name name="name" caption="Name" description="Give a name to this configuration so it can be later referenced by config-ref." required="true"></name>
       </group>
       <group id="general" caption="General">
         <useMetaData name="useMetaData" caption="useMetaData"></useMetaData>
-        <string defaultValue="Hello" name="greeting" caption="Greeting" description="Greeting message." supportsExpressions="false" required="false" javaType="java.lang.String"></string>
-        <string defaultValue="How are you?" name="reply" caption="Reply" description="Reply message." supportsExpressions="false" required="false" javaType="java.lang.String"></string>
       </group>
     </attribute-category>
   </global-cloud-connector>
@@ -31,11 +29,12 @@
       </group>
     </attribute-category>
   </cloud-connector>
-  <cloud-connector returnType="java.util.List&lt;java.util.List&lt;java.lang.String&gt;&gt;" categories="DataSenseResolver" caption="Convert Excel" icon="icons/small/excel-connector-24x16.png" localId="convert-excel" image="icons/large/excel-connector-48x32.png" abstract="true" extends="http://www.mulesoft.org/schema/mule/excel/abstractExcelConnectorGeneric" metaData="static">
+  <cloud-connector returnType="java.util.List&lt;java.util.Map&lt;java.lang.String,java.lang.String&gt;&gt;" categories="DataSenseResolver" caption="Convert Excel" icon="icons/small/excel-connector-24x16.png" localId="convert-excel" image="icons/large/excel-connector-48x32.png" abstract="true" extends="http://www.mulesoft.org/schema/mule/excel/abstractExcelConnectorGeneric" metaData="static">
     <attribute-category caption="General" description="General.">
       <group id="general" caption="General">
         <string name="fileName" caption="File Name" description="Excel file location." required="true" javaType="java.lang.String"></string>
         <string name="sheetName" caption="Sheet Name" description="Sheet in Excel file to retrieve data." required="true" javaType="java.lang.String"></string>
+        <boolean defaultValue="true" name="fileIncludesHeaderRow" caption="File Includes Header Row" description="Headers are included in file." supportsExpressions="true" required="false" javaType="boolean"></boolean>
       </group>
     </attribute-category>
   </cloud-connector>
