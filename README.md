@@ -3,6 +3,10 @@ Anypoint Connector for Microsoft Excel. This project leverages the Apache POI pr
 
 <img src="https://raw.githubusercontent.com/djuang1/excel-connector/master/img/screenshot.png" width="500px">
 
+# Example output
+
+<img src="https://raw.githubusercontent.com/djuang1/excel-connector/master/img/example_output.png" width="500px">
+
 # Mule supported versions
 Mule 3.5.x
 
