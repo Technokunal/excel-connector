@@ -16,7 +16,7 @@ import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
 @SuppressWarnings("all")
-@Generated(value = "Mule DevKit Version 3.7.1", date = "2015-12-15T07:05:32-06:00", comments = "Build UNNAMED.2613.77421cc")
+@Generated(value = "Mule DevKit Version 3.7.1", date = "2015-12-15T07:10:27-06:00", comments = "Build UNNAMED.2613.77421cc")
 public class ReadExcelDefinitionParser
     extends AbstractDevkitBasedDefinitionParser
 {

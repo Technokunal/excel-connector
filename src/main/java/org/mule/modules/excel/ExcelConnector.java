@@ -171,6 +171,8 @@ public class ExcelConnector {
         				// if column is not blank or empty, set column name to column
         				if (this.excelData.get(0).get(j) != null && !this.excelData.get(0).get(j).isEmpty()){
             				colName = this.excelData.get(0).get(j);
+            			} else {
+            				colName += (j + 1);            				
             			}
     				}    				
     			} else {
