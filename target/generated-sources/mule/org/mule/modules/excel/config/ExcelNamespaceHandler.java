@@ -14,7 +14,7 @@ import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
  * 
  */
 @SuppressWarnings("all")
-@Generated(value = "Mule DevKit Version 3.7.1", date = "2015-12-15T02:20:32-06:00", comments = "Build UNNAMED.2613.77421cc")
+@Generated(value = "Mule DevKit Version 3.7.1", date = "2015-12-15T07:05:32-06:00", comments = "Build UNNAMED.2613.77421cc")
 public class ExcelNamespaceHandler
     extends NamespaceHandlerSupport
 {
@@ -44,9 +44,9 @@ public class ExcelNamespaceHandler
             handleException("config", "@Config", ex);
         }
         try {
-            this.registerBeanDefinitionParser("convert-excel", new ConvertExcelDefinitionParser());
+            this.registerBeanDefinitionParser("read-excel", new ReadExcelDefinitionParser());
         } catch (NoClassDefFoundError ex) {
-            handleException("convert-excel", "@Processor", ex);
+            handleException("read-excel", "@Processor", ex);
         }
     }
 

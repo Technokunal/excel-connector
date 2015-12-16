@@ -2,13 +2,10 @@
 
 <namespace xmlns="http://www.mulesoft.org/schema/mule/tooling.attributes" xmlns:mule="http://www.mulesoft.org/schema/mule/core" url="http://www.mulesoft.org/schema/mule/excel" prefix="excel">
   <global-cloud-connector versions="[3.5.0,8.0.0]" caption="Excel" description="" icon="" localId="parentConfig" image="" abstract="true" extends="http://www.mulesoft.org/schema/mule/excel/abstractExcelConnectorGeneric"></global-cloud-connector>
-  <global-cloud-connector versions="[3.5.0,8.0.0]" caption="Excel" description="Global Excel configuration information." icon="icons/small/excel-connector-24x16.png" localId="config" image="icons/large/excel-connector-48x32.png" abstract="false" extends="http://www.mulesoft.org/schema/mule/excel/parentConfig" connectivityTesting="off" metaData="dynamic" metaDataKeyDisplay="DISPLAY_NAME" supportsUserDefinedMetaData="false">
+  <global-cloud-connector versions="[3.5.0,8.0.0]" caption="Excel" description="Global Excel configuration information." icon="icons/small/excel-connector-24x16.png" localId="config" image="icons/large/excel-connector-48x32.png" abstract="false" extends="http://www.mulesoft.org/schema/mule/excel/parentConfig" connectivityTesting="off" metaData="static" metaDataKeyDisplay="DISPLAY_NAME" supportsUserDefinedMetaData="false">
     <attribute-category caption="General" description="Excel configuration properties.">
       <group id="excelGenericProperties" caption="Basic Settings">
         <name name="name" caption="Name" description="Give a name to this configuration so it can be later referenced by config-ref." required="true"></name>
-      </group>
-      <group id="general" caption="General">
-        <useMetaData name="useMetaData" caption="useMetaData"></useMetaData>
       </group>
     </attribute-category>
   </global-cloud-connector>
@@ -24,12 +21,12 @@
       <group id="excelConnectorGeneric" caption="Basic Settings">
         <modeSwitch alwaysCombo="true" name="Excel operations to execute" caption="Operation" description="Operation.">
           <no-operation abstractElement="http://www.mulesoft.org/schema/mule/excel/abstractExcelConnectorGeneric" versions="[3.5.0,8.0.0]" connector-name="processor"></no-operation>
-          <mode modeId="http://www.mulesoft.org/schema/mule/excel/convert-excel" modeLabel="Convert excel"></mode>
+          <mode modeId="http://www.mulesoft.org/schema/mule/excel/read-excel" modeLabel="Read excel"></mode>
         </modeSwitch>
       </group>
     </attribute-category>
   </cloud-connector>
-  <cloud-connector returnType="java.util.List&lt;java.util.Map&lt;java.lang.String,java.lang.String&gt;&gt;" categories="DataSenseResolver" caption="Convert Excel" icon="icons/small/excel-connector-24x16.png" localId="convert-excel" image="icons/large/excel-connector-48x32.png" abstract="true" extends="http://www.mulesoft.org/schema/mule/excel/abstractExcelConnectorGeneric" metaData="static">
+  <cloud-connector returnType="java.util.List&lt;java.util.Map&lt;java.lang.String,java.lang.String&gt;&gt;" caption="Read Excel" icon="icons/small/excel-connector-24x16.png" localId="read-excel" image="icons/large/excel-connector-48x32.png" abstract="true" extends="http://www.mulesoft.org/schema/mule/excel/abstractExcelConnectorGeneric" metaData="static">
     <attribute-category caption="General" description="General.">
       <group id="general" caption="General">
         <string name="fileName" caption="File Name" description="Excel file location." required="true" javaType="java.lang.String"></string>

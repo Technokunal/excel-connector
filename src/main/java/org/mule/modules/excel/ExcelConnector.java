@@ -7,7 +7,6 @@ import java.util.List;
 
 import org.mule.api.annotations.Connector;
 import org.mule.api.annotations.display.Summary;
-import org.mule.api.annotations.MetaDataScope;
 import org.mule.api.annotations.Processor;
 import org.mule.api.annotations.param.Default;
 
@@ -27,7 +26,6 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 
 @Connector(name="excel", friendlyName="Excel")
-@MetaDataScope( DataSenseResolver.class )
 public class ExcelConnector {
 	
 	public static final int EXCEL_STYLE_ESCAPING = 0;
@@ -39,23 +37,25 @@ public class ExcelConnector {
     private DataFormatter formatter = null;
     private FormulaEvaluator evaluator = null;
     private String separator = ",";
+    private boolean includesHeader = true;
     
     /**
      * Custom processor
      *
-     * {@sample.xml ../../../doc/excel-connector.xml.sample excel:convertexcel}
+     * {@sample.xml ../../../doc/excel-connector.xml.sample excel:readexcel}
      *
      * @param fileName Excel file location.
      * @param sheetName Sheet in Excel file to retrieve data.
      * @param fileIncludesHeaderRow Headers are included in file.
-     * @return Data in List<Map> format.
+     * @return Data in List format.
      */
     @Processor
-    @Summary("Convert Excel to Maps")
-    public List<Map<String,String>> ConvertExcel(String fileName, String sheetName, @Default("true") boolean fileIncludesHeaderRow) throws FileNotFoundException, IOException, IllegalArgumentException, InvalidFormatException{
+    @Summary("Read Excel File")
+    public List<Map<String,String>> readExcel(String fileName, String sheetName, @Default("true") boolean fileIncludesHeaderRow) throws FileNotFoundException, IOException, IllegalArgumentException, InvalidFormatException{
     	
     	File source = new File(fileName);
     	File[] filesList = null;
+    	this.includesHeader = fileIncludesHeaderRow;
     	
     	if(source.isDirectory()) {
             filesList = source.listFiles(new ExcelFilenameFilter());
@@ -65,13 +65,11 @@ public class ExcelConnector {
         }
     	
     	for(File excelFile : filesList) {
-            // Open the workbook
             this.openWorkbook(excelFile);
-            // Convert it's contents into Map
             this.convertSheetToMap(sheetName); 
         }
     	
-    	return generateKeyValues();
+    	return generateMap(fileIncludesHeaderRow);
     }
     
     private void convertSheetToMap(String sheetName) {
@@ -105,9 +103,9 @@ public class ExcelConnector {
 
         if(row != null) {
             lastCellNum = row.getLastCellNum();
-            for(int i = 0; i <= lastCellNum - 1; i++) {
+            for(int i = 0; i <= lastCellNum - 1; i++) {            	            	
                 cell = row.getCell(i);
-                if(cell == null) {
+                if(cell == null) {  
                 	excelLine.add("");
                 }
                 else {
@@ -144,29 +142,51 @@ public class ExcelConnector {
 		}
 	}
     
-    private List<Map<String,String>> generateKeyValues() {
+    private List<Map<String,String>> generateMap(boolean fileIncludesHeaderRow) {
     	
     	List<Map<String, String>> list = new ArrayList<>();
     	List<String> line = null;
     	String csvLineElement = null;
     	
     	for(int i = 0; i < this.excelData.size(); i++) {
+    		
+    		if(fileIncludesHeaderRow && i == 0){
+    			continue;
+    		}
+    		
     		line = this.excelData.get(i);
     		
     		Map<String, String> row = new HashMap<>();  
     		
     		for(int j = 0; j < this.maxRowWidth; j++) {
-    			  
+    			
+    			String colName = "Column";
+    					
+    			if(fileIncludesHeaderRow){
+
+    				// if there are more columns than headers, create column name (Column#)
+    				if ((j + 1) > this.excelData.get(0).size()){
+    					colName += (j + 1);
+    				} else {
+        				// if column is not blank or empty, set column name to column
+        				if (this.excelData.get(0).get(j) != null && !this.excelData.get(0).get(j).isEmpty()){
+            				colName = this.excelData.get(0).get(j);
+            			}
+    				}    				
+    			} else {
+    				colName += (j + 1);    			
+    			}
+    			
     			if(line.size() > j) {
     				csvLineElement = line.get(j);
     				if(csvLineElement != null) {            						
-            			row.put(this.excelData.get(0).get(j), escapeEmbeddedCharacters(line.get(j)));			
+            			row.put(colName, escapeEmbeddedCharacters(line.get(j)));			
     				} else {
-    					row.put(this.excelData.get(0).get(j), "");   
+    					row.put(colName, "");   
     				}    				
     			}
     			if(line.size() <= j) {    				
-        			row.put(this.excelData.get(0).get(j), "");
+        			row.put(colName, "");
     			}  
     			
     		}
