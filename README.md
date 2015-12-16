@@ -1,8 +1,7 @@
 # Microsoft Excel MuleSoft Anypoint Connector
-Anypoint Connector for Microsoft Excel. Project leverages the Apache POI project to read in *.xlsx and *.xls files. You configure the location of the file and the sheet, and the connector transforms the data in the sheet into a List<Map> object.
+Anypoint Connector for Microsoft Excel. This project leverages the Apache POI project to read in *.xlsx and *.xls files. You configure the location of the file and the sheet within the file to extract date from. The connector reads the sheet and outputs the data into a List<Map> object.
 
-![ScreenShot](https://raw.githubusercontent.com/djuang1/excel-connector/master/img/screenshot.png)
-
+<img src="https://raw.githubusercontent.com/djuang1/excel-connector/master/img/screenshot.png" width="500px">
 
 # Mule supported versions
 Mule 3.5.x
