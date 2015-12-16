@@ -6,9 +6,6 @@ Anypoint Connector for Microsoft Excel. This project leverages the Apache POI pr
 # Mule supported versions
 Mule 3.5.x
 
-# [Destination service or application name] supported versions
-Microsoft Excel (XLS and XLSX)
-
 #Service or application supported modules
 Microsoft Excel (XLS and XLSX)
 
